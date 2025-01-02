@@ -1,6 +1,6 @@
 package io.josemmo.bukkit.plugin.utils;
 
-import com.comphenix.protocol.events.ListenerPriority;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.josemmo.bukkit.plugin.YamipaPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -102,6 +102,11 @@ public class SelectBlockTask {
      * Internal listener for handling player events
      */
     private static class SelectBlockTaskListener extends InteractWithEntityListener implements Listener {
+
+        private SelectBlockTaskListener() {
+            super(PacketListenerPriority.LOW);
+        }
+
         @Override
         public void register() {
             super.register();
@@ -113,11 +118,6 @@ public class SelectBlockTask {
         public void unregister() {
             super.unregister();
             HandlerList.unregisterAll(this);
-        }
-
-        @Override
-        public @NotNull ListenerPriority getPriority() {
-            return ListenerPriority.LOW;
         }
 
         @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)

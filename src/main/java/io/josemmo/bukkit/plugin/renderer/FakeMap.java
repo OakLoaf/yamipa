@@ -1,6 +1,6 @@
 package io.josemmo.bukkit.plugin.renderer;
 
-import io.josemmo.bukkit.plugin.packets.MapDataPacket;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerMapData;
 import io.josemmo.bukkit.plugin.utils.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapPalette;
@@ -147,13 +147,18 @@ public class FakeMap extends FakeEntity {
      * Get map pixels packet
      * @return Map pixels packet
      */
-    public @NotNull MapDataPacket getPixelsPacket() {
-        MapDataPacket mapDataPacket = new MapDataPacket();
-        mapDataPacket.setId(id)
-            .setScale(0) // Fully zoomed-in
-            .setLocked(true)
-            .setArea(DIMENSION, DIMENSION, 0, 0)
-            .setPixels(pixels);
-        return mapDataPacket;
+    public @NotNull WrapperPlayServerMapData getPixelsPacket() {
+        return new WrapperPlayServerMapData(
+            id,
+            (byte) 0,
+            false,
+            true,
+            null,
+            DIMENSION,
+            DIMENSION,
+            0,
+            0,
+            pixels
+        );
     }
 }

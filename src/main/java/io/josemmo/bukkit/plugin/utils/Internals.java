@@ -8,8 +8,6 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.comphenix.protocol.reflect.FuzzyReflection;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.mojang.brigadier.CommandDispatcher;
 
 public class Internals {

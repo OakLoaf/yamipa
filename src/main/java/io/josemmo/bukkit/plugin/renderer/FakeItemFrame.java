@@ -1,16 +1,17 @@
 package io.josemmo.bukkit.plugin.renderer;
 
-import com.comphenix.protocol.events.PacketContainer;
-import io.josemmo.bukkit.plugin.packets.DestroyEntityPacket;
-import io.josemmo.bukkit.plugin.packets.EntityMetadataPacket;
-import io.josemmo.bukkit.plugin.packets.SpawnEntityPacket;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import io.josemmo.bukkit.plugin.packets.EntityMetadataPacketBuilder;
+import io.josemmo.bukkit.plugin.packets.SpawnEntityPacketBuilder;
 import io.josemmo.bukkit.plugin.utils.Internals;
 import io.josemmo.bukkit.plugin.utils.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -82,7 +83,7 @@ public class FakeItemFrame extends FakeEntity {
      * Get entity spawn packet
      * @return Spawn packet
      */
-    public @NotNull SpawnEntityPacket getSpawnPacket() {
+    public @NotNull WrapperPlayServerSpawnEntity getSpawnPacket() {
         // Calculate frame position in relation to target block
         double x = location.getBlockX();
         double y = location.getBlockY();
@@ -121,14 +122,13 @@ public class FakeItemFrame extends FakeEntity {
         }
 
         // Create item frame entity
-        SpawnEntityPacket framePacket = new SpawnEntityPacket();
-        framePacket.setId(id)
-            .setEntityType((glowing && SUPPORTS_GLOWING) ? EntityType.GLOW_ITEM_FRAME : EntityType.ITEM_FRAME)
+        return new SpawnEntityPacketBuilder()
+            .setId(id)
+            .setEntityType((glowing && SUPPORTS_GLOWING) ? EntityTypes.GLOW_ITEM_FRAME : EntityTypes.ITEM_FRAME)
             .setPosition(x, y, z)
             .setRotation(pitch, yaw)
-            .setData(orientation);
-
-        return framePacket;
+            .setData(orientation)
+            .build();
     }
 
     /**
@@ -137,8 +137,8 @@ public class FakeItemFrame extends FakeEntity {
      * @param step   Map step
      */
     @SuppressWarnings("deprecation")
-    public @NotNull List<PacketContainer> getRenderPackets(@NotNull Player player, int step) {
-        List<PacketContainer> packets = new ArrayList<>(2);
+    public @NotNull List<PacketWrapper<?>> getRenderPackets(@NotNull Player player, int step) {
+        List<PacketWrapper<?>> packets = new ArrayList<>(2);
 
         // Enqueue map pixels packet (if needed)
         boolean mustSendPixels = maps[step].requestResend(player);
@@ -152,14 +152,12 @@ public class FakeItemFrame extends FakeEntity {
         itemStackMeta.setMapId(maps[step].getId());
         itemStack.setItemMeta(itemStackMeta);
 
-        // Build entity metadata packet
-        EntityMetadataPacket metadataPacket = new EntityMetadataPacket();
-        metadataPacket.setId(id)
+        packets.add(new EntityMetadataPacketBuilder()
+            .setId(id)
             .setInvisible(true)
             .setItem(itemStack)
             .setRotation(rotation)
-            .build();
-        packets.add(metadataPacket);
+            .build());
 
         return packets;
     }
@@ -168,9 +166,7 @@ public class FakeItemFrame extends FakeEntity {
      * Get destroy item frame packet
      * @return Destroy packet
      */
-    public @NotNull DestroyEntityPacket getDestroyPacket() {
-        DestroyEntityPacket destroyPacket = new DestroyEntityPacket();
-        destroyPacket.setId(id);
-        return destroyPacket;
+    public @NotNull WrapperPlayServerDestroyEntities getDestroyPacket() {
+        return new WrapperPlayServerDestroyEntities(id);
     }
 }

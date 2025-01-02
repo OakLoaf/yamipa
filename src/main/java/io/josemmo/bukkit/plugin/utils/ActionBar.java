@@ -1,8 +1,9 @@
 package io.josemmo.bukkit.plugin.utils;
 
-import com.comphenix.protocol.ProtocolLibrary;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerActionBar;
 import io.josemmo.bukkit.plugin.YamipaPlugin;
-import io.josemmo.bukkit.plugin.packets.ActionBarPacket;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -67,13 +68,11 @@ public class ActionBar {
      * @return This instance
      */
     public ActionBar sendOnce() {
-        ActionBarPacket actionBarPacket = new ActionBarPacket();
-        actionBarPacket.setText(message);
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, actionBarPacket);
-        } catch (Exception e) {
-            LOGGER.severe("Failed to send ActionBar to " + player.getName(), e);
-        }
+        WrapperPlayServerActionBar actionBarPacket = new WrapperPlayServerActionBar(
+            Component.text(message)
+        );
+
+        PacketEvents.getAPI().getProtocolManager().sendPacket(player, actionBarPacket);
         return this;
     }
 

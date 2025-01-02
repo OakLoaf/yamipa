@@ -1,23 +1,22 @@
 package io.josemmo.bukkit.plugin.utils;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.ListeningWhitelist;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import io.josemmo.bukkit.plugin.YamipaPlugin;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.*;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
-public abstract class InteractWithEntityListener implements PacketListener {
+public abstract class InteractWithEntityListener extends PacketListenerAbstract {
     public static final int MAX_BLOCK_DISTANCE = 5; // Server should only accept entities within a 4-block radius
     private static final Logger LOGGER = Logger.getLogger("InteractWithEntityListener");
+
+    public InteractWithEntityListener(PacketListenerPriority priority) {
+        super(priority);
+    }
 
     /**
      * On player attack listener
@@ -38,29 +37,25 @@ public abstract class InteractWithEntityListener implements PacketListener {
     public abstract boolean onInteract(@NotNull Player player, @NotNull Block block, @NotNull BlockFace face);
 
     /**
-     * Get listener priority
-     * @return Listener priority
-     */
-    public @NotNull ListenerPriority getPriority() {
-        return ListenerPriority.LOWEST;
-    }
-
-    /**
      * Register listener
      */
     public void register() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(this);
+        PacketEvents.getAPI().getEventManager().registerListener(this);
     }
 
     /**
      * Unregister listener
      */
     public void unregister() {
-        ProtocolLibrary.getProtocolManager().removePacketListener(this);
+        PacketEvents.getAPI().getEventManager().unregisterListener(this);
     }
 
     @Override
-    public final void onPacketReceiving(@NotNull PacketEvent event) {
+    public void onPacketReceive(PacketReceiveEvent event) {
+        if (event.getPacketType() !=  PacketType.Play.Client.INTERACT_ENTITY) {
+            return;
+        }
+
         Player player = event.getPlayer();
 
         // Discard out-of-range packets
@@ -74,20 +69,15 @@ public abstract class InteractWithEntityListener implements PacketListener {
         BlockFace targetBlockFace = targetBlock.getFace(adjacentBlock);
         if (targetBlockFace == null) return;
 
-        // Get action
-        EnumWrappers.EntityUseAction action;
-        if (Internals.MINECRAFT_VERSION < 17) {
-            action = event.getPacket().getEntityUseActions().read(0);
-        } else {
-            action = event.getPacket().getEnumEntityUseActions().read(0).getAction();
-        }
+        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
+        WrapperPlayClientInteractEntity.InteractAction action = packet.getAction();
 
         // Notify handler synchronously
         boolean allowEvent = true;
         try {
-            if (action == EnumWrappers.EntityUseAction.ATTACK) {
+            if (action == WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
                 allowEvent = onAttack(player, targetBlock, targetBlockFace);
-            } else if (action == EnumWrappers.EntityUseAction.INTERACT_AT) {
+            } else if (action == WrapperPlayClientInteractEntity.InteractAction.INTERACT_AT) {
                 allowEvent = onInteract(player, targetBlock, targetBlockFace);
             }
         } catch (Exception e) {
@@ -101,25 +91,7 @@ public abstract class InteractWithEntityListener implements PacketListener {
     }
 
     @Override
-    public final void onPacketSending(PacketEvent event) {
+    public void onPacketSend(PacketSendEvent event) {
         // Intentionally left blank
-    }
-
-    @Override
-    public final ListeningWhitelist getReceivingWhitelist() {
-        return ListeningWhitelist.newBuilder()
-            .priority(getPriority())
-            .types(PacketType.Play.Client.USE_ENTITY)
-            .build();
-    }
-
-    @Override
-    public final ListeningWhitelist getSendingWhitelist() {
-        return ListeningWhitelist.EMPTY_WHITELIST;
-    }
-
-    @Override
-    public final Plugin getPlugin() {
-        return YamipaPlugin.getInstance();
     }
 }
