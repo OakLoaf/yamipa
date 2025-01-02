@@ -1,5 +1,6 @@
 package io.josemmo.bukkit.plugin.renderer;
 
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import io.josemmo.bukkit.plugin.YamipaPlugin;
 import io.josemmo.bukkit.plugin.commands.ImageCommand;
 import io.josemmo.bukkit.plugin.storage.ImageFile;
@@ -40,6 +41,10 @@ public class ItemService extends InteractWithEntityListener implements Listener 
         NSK_WIDTH = new NamespacedKey(plugin, "width");
         NSK_HEIGHT = new NamespacedKey(plugin, "height");
         NSK_FLAGS = new NamespacedKey(plugin, "flags");
+    }
+
+    public ItemService() {
+        super(PacketListenerPriority.LOWEST);
     }
 
     /**
