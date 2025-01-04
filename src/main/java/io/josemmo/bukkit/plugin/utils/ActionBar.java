@@ -72,7 +72,7 @@ public class ActionBar {
             Component.text(message)
         );
 
-        PacketEvents.getAPI().getProtocolManager().sendPacket(player, actionBarPacket);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, actionBarPacket);
         return this;
     }
 

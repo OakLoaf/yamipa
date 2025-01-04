@@ -1,6 +1,9 @@
 package io.josemmo.bukkit.plugin.renderer;
 
+import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
@@ -13,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
@@ -147,10 +149,10 @@ public class FakeItemFrame extends FakeEntity {
         }
 
         // Create and attach filled map
-        ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
-        MapMeta itemStackMeta = Objects.requireNonNull((MapMeta) itemStack.getItemMeta());
-        itemStackMeta.setMapId(maps[step].getId());
-        itemStack.setItemMeta(itemStackMeta);
+        ItemStack itemStack = new com.github.retrooper.packetevents.protocol.item.ItemStack.Builder()
+            .type(ItemTypes.FILLED_MAP)
+            .component(ComponentTypes.MAP_ID, maps[step].getId())
+            .build();
 
         packets.add(new EntityMetadataPacketBuilder()
             .setId(id)

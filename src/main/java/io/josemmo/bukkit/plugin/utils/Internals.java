@@ -27,23 +27,8 @@ public class Internals {
             Server obcInstance = Bukkit.getServer();
             Class<?> obcClass = obcInstance.getClass();
 
-            // Get "net.minecraft.server.MinecraftServer" references
-            Object nmsServerInstance = obcClass.getDeclaredMethod("getServer").invoke(obcInstance);
-
-            // Get "net.minecraft.server.CommandDispatcher" references
-            Class<?> nmsDispatcherClass = MinecraftReflection.getMinecraftClass(
-            	"CommandDispatcher", // Spigot <1.17
-            	"commands.CommandDispatcher", // Spigot >=1.17
-            	"commands.Commands" // PaperMC
-            );
-            Object nmsDispatcherInstance = FuzzyReflection.fromObject(nmsServerInstance, true)
-            	.getMethodByReturnTypeAndParameters("getDispatcher", nmsDispatcherClass)
-            	.invoke(nmsServerInstance);
-
             // Get "com.mojang.brigadier.CommandDispatcher" instance
-            DISPATCHER = (CommandDispatcher<?>) FuzzyReflection.fromObject(nmsDispatcherInstance, true)
-            	.getMethodByReturnTypeAndParameters("getDispatcher", CommandDispatcher.class)
-            	.invoke(nmsDispatcherInstance);
+            DISPATCHER = MinecraftReflection.getDispatcher();
 
             // Get command map instance
             Field commandMapField = obcClass.getDeclaredField("commandMap");

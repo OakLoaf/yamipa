@@ -455,7 +455,7 @@ public class FakeImage extends FakeEntity {
         }
 
         // Send packets
-        tryToSendPackets(player, packets);
+        tryToSendPackets(player, packets, true);
     }
 
     /**
@@ -487,7 +487,8 @@ public class FakeImage extends FakeEntity {
                     packets.add(frame.getDestroyPacket());
                     LOGGER.fine("Destroyed FakeItemFrame#" + frame.getId() + " for Player#" + targetName);
                 }
-                tryToSendPackets(target, packets);
+
+                tryToSendPackets(target, packets, packets.size() > 1);
             }
         }
 
@@ -552,7 +553,7 @@ public class FakeImage extends FakeEntity {
                 for (FakeItemFrame frame : frames) {
                     packets.addAll(frame.getRenderPackets(player, currentStep));
                 }
-                tryToSendPackets(player, packets);
+                tryToSendPackets(player, packets, true);
             }
         } catch (ConcurrentModificationException e) {
             // We can safely ignore this exception as it will just result

@@ -7,6 +7,8 @@ import io.josemmo.bukkit.plugin.YamipaPlugin;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+
 public abstract class FakeEntity {
 
     /**
@@ -29,7 +31,11 @@ public abstract class FakeEntity {
      * @param packet Packet to send
      */
     protected static void tryToSendPacket(@NotNull Player player, @NotNull PacketWrapper<?> packet) {
-        PacketEvents.getAPI().getProtocolManager().sendPacket(player, packet);
+        try {
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+        } catch (Exception e) {
+            YamipaPlugin.getInstance().getLogger().log(Level.WARNING, "Caught exception when sending a packet: ", e);
+        }
     }
 
     /**
@@ -38,7 +44,7 @@ public abstract class FakeEntity {
      * @param packets Packets to send
      */
     protected static void tryToSendPackets(@NotNull Player player, @NotNull Iterable<PacketWrapper<?>> packets) {
-        tryToSendPackets(player, packets, true);
+        tryToSendPackets(player, packets, false);
     }
 
     /**

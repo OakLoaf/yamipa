@@ -2,10 +2,10 @@ package io.josemmo.bukkit.plugin.packets;
 
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import io.josemmo.bukkit.plugin.utils.Internals;
 import org.bukkit.Rotation;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class EntityMetadataPacketBuilder {
     }
 
     public @NotNull EntityMetadataPacketBuilder setItem(@NotNull ItemStack item) {
-        metadata.add(new EntityData(0, EntityDataTypes.ITEMSTACK, item));
+        metadata.add(new EntityData(ITEM_INDEX, EntityDataTypes.ITEMSTACK, item));
         return this;
     }
 
