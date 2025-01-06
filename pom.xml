@@ -36,6 +36,10 @@
             <url>https://repo.codemc.io/repository/maven-releases/</url>
         </repository>
         <repository>
+            <id>lushplugins</id>
+            <url>https://repo.lushplugins.org/snapshots/</url>
+        </repository>
+        <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
@@ -56,6 +60,13 @@
             <artifactId>packetevents-spigot</artifactId>
             <version>2.6.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- https://repo.lushplugins.org/snapshots/ -->
+        <dependency>
+            <groupId>org.lushplugins</groupId>
+            <artifactId>ChatColorHandler</artifactId>
+            <version>5.1.0</version>
         </dependency>
 
         <!-- https://github.com/Mojang/brigadier/releases -->

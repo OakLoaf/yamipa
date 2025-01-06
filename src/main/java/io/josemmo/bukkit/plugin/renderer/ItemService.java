@@ -25,6 +25,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lushplugins.chatcolorhandler.ChatColorHandler;
+
 import java.util.Collections;
 import java.util.Objects;
 
@@ -62,8 +64,8 @@ public class ItemService extends InteractWithEntityListener implements Listener 
 
         // Set metadata
         PersistentDataContainer itemData = itemMeta.getPersistentDataContainer();
-        itemMeta.setDisplayName(image.getFilename() + ChatColor.AQUA + " (" + width + "x" + height + ")");
-        itemMeta.setLore(Collections.singletonList("Yamipa image"));
+        itemMeta.setDisplayName(ChatColorHandler.translate(String.format("<white>₊<#f5ebae>★ <#db5365>%s (%sx%s) <#f5ebae>★<white>₊", image.getFilename(), width, height)));
+        itemMeta.setLore(Collections.singletonList(ChatColorHandler.translate("&fImage Map!")));
         itemData.set(NSK_FILENAME, PersistentDataType.STRING, image.getFilename());
         itemData.set(NSK_WIDTH, PersistentDataType.INTEGER, width);
         itemData.set(NSK_HEIGHT, PersistentDataType.INTEGER, height);
