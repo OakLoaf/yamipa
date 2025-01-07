@@ -5,6 +5,7 @@ import io.josemmo.bukkit.plugin.YamipaPlugin;
 import io.josemmo.bukkit.plugin.commands.ImageCommand;
 import io.josemmo.bukkit.plugin.storage.ImageFile;
 import io.josemmo.bukkit.plugin.utils.ActionBar;
+import io.josemmo.bukkit.plugin.utils.FileNameUtils;
 import io.josemmo.bukkit.plugin.utils.InteractWithEntityListener;
 import io.josemmo.bukkit.plugin.utils.Logger;
 import org.bukkit.*;
@@ -64,7 +65,7 @@ public class ItemService extends InteractWithEntityListener implements Listener 
 
         // Set metadata
         PersistentDataContainer itemData = itemMeta.getPersistentDataContainer();
-        itemMeta.setDisplayName(ChatColorHandler.translate(String.format("<white>₊<#f5ebae>★ <#f7d6e0>%s (%sx%s) <#f5ebae>★<white>₊", image.getFilename(), width, height)));
+        itemMeta.setDisplayName(ChatColorHandler.translate(String.format("<white>₊<#f5ebae>★ <#f7d6e0>%s (%sx%s) <#f5ebae>★<white>₊", FileNameUtils.removeExtension(image.getFilename()), width, height)));
         itemMeta.setLore(Collections.singletonList(ChatColorHandler.translate("&fImage Map!")));
         itemData.set(NSK_FILENAME, PersistentDataType.STRING, image.getFilename());
         itemData.set(NSK_WIDTH, PersistentDataType.INTEGER, width);
